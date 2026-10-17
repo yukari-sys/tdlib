@@ -1,0 +1,63 @@
+name: Build TDlib
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build TDlib
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install gperf
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Checkout Builds
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          fetch-depth: 2
+          ref: build
+          path: build
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platforms;android-33 ndk;30.0.16248370
+
+      - name: Build Libressl
+        run: ./build-libressl.sh
+      
+      - name: Build Tdlib
+        run: ./build-tdlib.sh
+
+      - name: Publish the build
+        run: |
+          TDLIB_COMMIT=$(git -C td describe --exact-match --tags 2> /dev/null || git -C td rev-parse --short HEAD)
+          LIBRESSL_COMMIT=$(git -C libressl describe --exact-match --tags 2> /dev/null || git -C libressl rev-parse --short HEAD)
+
+          git -C build reset HEAD^
+          git -C build add -A
+          git -C build config --global user.name "Cuckloude"
+          git -C build config --global user.email "noreply@anthropic.com"
+          git -C build commit -m "Tdlib: ${TDLIB_COMMIT} | Libressl: ${LIBRESSL_COMMIT}"
+          git -C build push -fu origin build
