@@ -3,8 +3,9 @@ name: Build TDlib
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    paths:
+      - libressl
+      - td
 
 permissions:
   contents: write
