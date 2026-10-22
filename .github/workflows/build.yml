@@ -45,12 +45,9 @@ jobs:
         with:
           packages: platforms;android-33 ndk;30.0.16248370
 
-      - name: Build Libressl
-        run: ./build-libressl.sh
+      - name: Build Libressl & Tdlib
+        run: ./build.sh
       
-      - name: Build Tdlib
-        run: ./build-tdlib.sh
-
       - name: Publish the build
         run: |
           TDLIB_COMMIT=$(git -C td describe --exact-match --tags 2> /dev/null || git -C td rev-parse --short HEAD)
