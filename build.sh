@@ -21,7 +21,7 @@ prepare_td() {
   cmake --build build-native --target tl_generate_java
   cp example/java/org/drinkless/tdlib/Client.java \
     example/android/org/drinkless/tdlib/TdApi.java \
-    ../build
+    ${OUTPUT_DIR}
 
   popd
 }
