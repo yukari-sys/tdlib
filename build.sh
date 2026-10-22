@@ -23,7 +23,7 @@ prepare_td() {
     example/android/org/drinkless/tdlib/TdApi.java \
     ../build
 
-  popd td
+  popd
 }
 
 prepare_libressl() {
@@ -31,7 +31,7 @@ prepare_libressl() {
   
   if [ ! -f ./configure ]; then ./autogen.sh; fi
 
-  popd libressl
+  popd
 }
 
 build_td() {
